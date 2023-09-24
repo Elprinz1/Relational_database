@@ -97,7 +97,7 @@ def return_incident_count_by_category_subcategory(**kargs):
     query = f"""
                 SELECT incident_category, \
                     incident_subcategory, \
-                    COUNT(incident_subcategory)
+                    COUNT(*)
                 FROM incident
                 JOIN incident_type
                 ON incident_type.incident_code = \
@@ -105,7 +105,7 @@ def return_incident_count_by_category_subcategory(**kargs):
                 GROUP BY \
                     incident_category, incident_subcategory
                 HAVING \
-                    COUNT(incident_subcategory) > {kargs['count_limit']}
+                    COUNT(*) > {kargs['count_limit']}
                 ORDER BY COUNT DESC, incident_category
             """
     return check_query_args(query=query, **kargs)
@@ -296,42 +296,3 @@ def create_index(**kargs):
         conn.commit()
 
     return "Successfully created indexes"
-
-
-# queryset = [
-#         "CREATE INDEX incident_year_month_index \
-#             ON incident \
-#             USING btree (EXTRACT(YEAR FROM incident_datetime), \
-#             EXTRACT(MONTH FROM incident_datetime));",
-#         "CREATE INDEX location_index \
-#             ON location \
-#             USING btree (latitude, longitude);",
-#         "CREATE INDEX incident_type_index \
-#             ON incident_type \
-#             USING hash (incident_code);",
-#         "CREATE INDEX report_type_index \
-#             ON report_type \
-#             USING hash (report_type_code);",
-#     ]
-
-
-# queryset = [
-#         "CREATE INDEX incident_year_index \
-#             ON incident \
-#             USING hash (EXTRACT(YEAR FROM incident_datetime));",
-#         "CREATE INDEX incident_month_index \
-#             ON incident \
-#             USING hash (EXTRACT(MONTH FROM incident_datetime));",
-#         "CREATE INDEX location_lat_index \
-#             ON location \
-#             USING hash(latitude);",
-#          "CREATE INDEX location_long_index \
-#             ON location \
-#             USING hash (longitude);",
-#         "CREATE INDEX incident_type_index \
-#             ON incident_type \
-#             USING hash (incident_code);",
-#         "CREATE INDEX report_type_index \
-#             ON report_type \
-#             USING hash (report_type_code);",
-#     ]
